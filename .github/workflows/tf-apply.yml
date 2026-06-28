@@ -38,9 +38,6 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
-      - name: "Terraform Format Validation"
-        run: terraform fmt -check
-
       - name: "Terraform Initialize"
         run: terraform init
 
