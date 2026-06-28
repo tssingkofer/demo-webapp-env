@@ -1,0 +1,45 @@
+name: "Terraform Infrastructure Teardown"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target Environment to Destroy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  destroy:
+    name: "Terraform Destroy"
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+      TF_VAR_environment: ${{ inputs.environment }}
+
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v4
+
+      - name: "Authenticate to Google Cloud via OIDC"
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: "Setup Terraform Engine"
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+
+      - name: "Terraform Initialize"
+        run: terraform init
+
+      - name: "Terraform Destroy Execution"
+        run: terraform destroy -auto-approve
