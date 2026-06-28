@@ -48,4 +48,4 @@ jobs:
         run: terraform plan -var mongodb_password=${{ secrets.MONGODB_PASSWORD }} -out=tfplan
 
       - name: "Terraform Apply Execution"
-        run: terraform apply -var mongodb_password=${{ secrets.MONGODB_PASSWORD }} -auto-approve tfplan
+        run: terraform apply -auto-approve tfplan
